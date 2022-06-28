@@ -205,7 +205,6 @@ exports.resetPassword = (req, res, next) => {
 			throw err;
 
 		if (result.length > 0) {
-			console.log('your password: ' + body.password)
 			const hashPass = await encrypt.encryptPassword(body.password);
 			var query5 = 'UPDATE users SET password = ? WHERE email ="' + result[0].email + '"';
 			dbConn.query(query5, hashPass, function (err, result) {
