@@ -295,7 +295,7 @@ exports.recordDeletePage = (req, res, next) => {
 	
 	var code = req.params.id; //Get course code to delete
 	
-	var query3 = `DELETE FROM courses WHERE code = "${code}"`;
+	var query3 = `DELETE FROM book_list WHERE book_id = "${code}"`;
 	dbConn.query(query3, function(error){
 
 		if(error)
