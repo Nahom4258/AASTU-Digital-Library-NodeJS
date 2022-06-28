@@ -30,19 +30,34 @@
                 </div>
               </a>
             </article> -->
-              <div class="card card-custom" style="width: 18rem; margin-top: 15px;">
-                <img src="<%= data.imagePath %>" class="card-img-top" alt="...">
+              <!-- <div class="card card-custom" style="width: 18rem; margin-top: 15px;">
+                <img src="<%= data.imagePath %>" class="card-img-top" alt="..." style="height: 50%;">
                 <a href="#">
                   <div class="card-body">
                     <h5 class="card-title">
                       <%= data.title %>
                     </h5>
+                    <h6 style="text-align: center;"><i>
+                        <%= data.author %>
+                      </i></h6>
                     <p class="card-text">
                       <%= data.description %>
                     </p>
                     <a href="#" class="btn btn-primary" style="display: none;">Go somewhere</a>
                   </div>
                 </a>
+              </div> -->
+              <div class="book-card">
+                <div class="cover-container">
+                  <img src="<%= data.imagePath %>" alt="<%= data.title %>_cover">
+                </div>
+                <div class="title">
+                  <%= data.title %>
+                </div>
+                <div class="author">
+                  <%= data.author %>
+                </div>
+                <div class="genre"><%= data.genre %></div>
               </div>
               <% }); } else{ %>
                 <article class="card-custom">

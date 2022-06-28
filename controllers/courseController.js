@@ -6,6 +6,7 @@ const { validationResult } = require("express-validator");
 const dbConn = require("../config/db_Connection")
 const validator = require('../lib/validation_rules');
 const { uploadImage, uploadCSVFile } = require('../lib/fileUpload');
+const { count } = require('console');
 
 // Record Display Page
 exports.recordDisplayPage = (req, res, next) => {
@@ -13,74 +14,74 @@ exports.recordDisplayPage = (req, res, next) => {
 	var query1;
 	if (req.method == 'GET'){
 		if (req.session.level == 1)
-			query1 = 'SELECT * FROM `courses`';
+			query1 = "SELECT * FROM `book_list`";
 		else 
-			query1 = `SELECT * FROM courses as CO LEFT JOIN users as US ` + 
+			query1 = `SELECT * FROM book_list as CO LEFT JOIN users as US ` + 
 						`ON CO.user_id = US.id WHERE US.id = "${req.session.userID}"`;
 	}					
-	else if (req.method == 'POST')
-	{
-		const { body } = req;
-		if (typeof body.searchBy === 'undefined')
-		{
-			if(!body.search_Key)
-			{
-				if (req.session.level == 1)
-				{
-					query1 = 'SELECT * FROM `courses`';
-					req.flash ('success', "Please provide a search key!")
-				}
-				else
-				{
-					query1 = `SELECT * FROM courses as CO LEFT JOIN users as US ` + 
-								`ON CO.user_id = US.id WHERE US.id = "${req.session.userID}"`;					
-					req.flash ('success', "Please provide a search key!")
-				}
-			}
-			else{
-				//search multiple columns with "concat & like" operators
-				if (req.session.level == 1)
-				{
-					query1 = `SELECT * FROM courses WHERE `
-								+ `concat (code, title, description, category, certificate)`
-								+ ` like "%${body.search_Key}%"`;
-				}
-				else{
-					query1 = `SELECT * FROM courses as CO LEFT JOIN users as US ON CO.user_id = US.id` + 
-									` WHERE US.id = "${req.session.userID}"` +
-									` AND MATCH (code, title, description)` +
-									` AGAINST ("${body.search_Key}" IN NATURAL LANGUAGE MODE)`;					
-				}
+	// else if (req.method == 'POST')
+	// {
+	// 	const { body } = req;
+	// 	if (typeof body.searchBy === 'undefined')
+	// 	{
+	// 		if(!body.search_Key)
+	// 		{
+	// 			if (req.session.level == 1)
+	// 			{
+	// 				query1 = 'SELECT * FROM `courses`';
+	// 				req.flash ('success', "Please provide a search key!")
+	// 			}
+	// 			else
+	// 			{
+	// 				query1 = `SELECT * FROM courses as CO LEFT JOIN users as US ` + 
+	// 							`ON CO.user_id = US.id WHERE US.id = "${req.session.userID}"`;					
+	// 				req.flash ('success', "Please provide a search key!")
+	// 			}
+	// 		}
+	// 		else{
+	// 			//search multiple columns with "concat & like" operators
+	// 			if (req.session.level == 1)
+	// 			{
+	// 				query1 = `SELECT * FROM courses WHERE `
+	// 							+ `concat (code, title, description, category, certificate)`
+	// 							+ ` like "%${body.search_Key}%"`;
+	// 			}
+	// 			else{
+	// 				query1 = `SELECT * FROM courses as CO LEFT JOIN users as US ON CO.user_id = US.id` + 
+	// 								` WHERE US.id = "${req.session.userID}"` +
+	// 								` AND MATCH (code, title, description)` +
+	// 								` AGAINST ("${body.search_Key}" IN NATURAL LANGUAGE MODE)`;					
+	// 			}
 				
-				//fulltext search 
-				/*
-				* `SELECT * FROM courses WHERE MATCH (code, title, description)` +
-				*		` AGAINST ("${body.search_Key}" IN NATURAL LANGUAGE MODE)`;
-				*/
-			}
-		}
-		else if (req.session.level == 1)
-		{
-			if (body.searchBy == "course_code")
-				query1 = `SELECT * FROM courses WHERE code = "${body.search_Key}"`;
-			else if (body.searchBy == "course_title")
-				query1 = `SELECT * FROM courses WHERE title = "${body.search_Key}"`;
-		}
-		else
-		{			
-			if (body.searchBy == "course_code"){
-				query1 = `SELECT * FROM courses as CO LEFT JOIN users as US `
-								+ `ON CO.user_id = US.id WHERE CO.code = "${body.search_Key}"` 
-								+ ` AND US.id = "${req.session.userID}"`;
-			}
+	// 			//fulltext search 
+	// 			/*
+	// 			* `SELECT * FROM courses WHERE MATCH (code, title, description)` +
+	// 			*		` AGAINST ("${body.search_Key}" IN NATURAL LANGUAGE MODE)`;
+	// 			*/
+	// 		}
+	// 	}
+	// 	else if (req.session.level == 1)
+	// 	{
+	// 		if (body.searchBy == "course_code")
+	// 			query1 = `SELECT * FROM courses WHERE code = "${body.search_Key}"`;
+	// 		else if (body.searchBy == "course_title")
+	// 			query1 = `SELECT * FROM courses WHERE title = "${body.search_Key}"`;
+	// 	}
+	// 	else
+	// 	{			
+	// 		if (body.searchBy == "course_code"){
+	// 			query1 = `SELECT * FROM courses as CO LEFT JOIN users as US `
+	// 							+ `ON CO.user_id = US.id WHERE CO.code = "${body.search_Key}"` 
+	// 							+ ` AND US.id = "${req.session.userID}"`;
+	// 		}
 								
-			else if (body.searchBy == "course_title"){		
-				query1 = `SELECT * FROM courses as CO LEFT JOIN users as US `
-								+ `ON CO.user_id = US.id WHERE CO.title = "${body.search_Key}"` 
-								+ ` AND US.id = "${req.session.userID}"`;
-			}			
-		}
-	}
+	// 		else if (body.searchBy == "course_title"){		
+	// 			query1 = `SELECT * FROM courses as CO LEFT JOIN users as US `
+	// 							+ `ON CO.user_id = US.id WHERE CO.title = "${body.search_Key}"` 
+	// 							+ ` AND US.id = "${req.session.userID}"`;
+	// 		}			
+	// 	}
+	// }
 	
 	dbConn.query(query1, (error, result)=>{
 	
@@ -88,7 +89,7 @@ exports.recordDisplayPage = (req, res, next) => {
 			throw error;
 
 		const msg = req.flash ('success')
-		res.render('pages/display', {data:result, msg: msg, title:'Display Records'});
+		res.render('pages/display', {data:result, msg: msg, title:'Display Records', userLevel: req.session.level});
 	});	
 }
 
@@ -111,13 +112,13 @@ exports.addRecord = async(req, res, next) => {
 	}
 
     try {
-		 code = body.course_code
-		 title = body.course_title
-		 desc = body.course_desc
-		 cat = body.course_cat
-		 cert = body.certificate
-		 duration = body.course_dur
-		 cost = body.course_cost
+		 author_add = body.book_author
+		 title_add = body.book_title
+		 desc_add = body.book_desc
+		 genre_add = body.book_genre
+		 edition_add = body.book_edition
+		 count_add = body.book_count
+		 keyword_add = body.book_keyword
 		 
 		 let userId;
 		 if (req.session.level == 1)
@@ -125,10 +126,10 @@ exports.addRecord = async(req, res, next) => {
 		 else
 			 userId = req.session.userID;
 		
-		var query3 = `INSERT INTO courses (code, title, description, ` +
-								 `category, certificate, duration, cost, imagePath, user_id) ` +
+		var query3 = `INSERT INTO book_list (author, title, description, ` +
+								 `genre, count, edition, keyword, imagePath, user_id) ` +
 								 `VALUES(?,?,?,?,?,?,?,?,?)`;
-		dbConn.query(query3, [code, title, desc, cat, cert, duration, cost, 'None', userId], 
+		dbConn.query(query3, [author_add, title_add, desc_add, genre_add, count_add, edition_add, keyword_add, '/images/no_cover.jpg', userId], 
 					(error, rows)=>{
 						if(error)
 						{
@@ -159,9 +160,8 @@ exports.addRecord = async(req, res, next) => {
 // Record Editing Page
 exports.recordEditPage = (req, res, next) => {
 
-	var code = req.params.id;  //extract course code attached to the URL
-	
-	var query2 = `SELECT * FROM courses WHERE code = "${code}"`;
+	var id = req.params.id;  //extract course code attached to the URL
+	var query2 = `SELECT * FROM book_list WHERE book_id = "${id}"`;
 	dbConn.query(query2, function(error, result){
 		if(error)
 		{
@@ -187,22 +187,23 @@ exports.editRecord = (req, res, next) =>{
 	var id = req.params.id;
 		
 	if (!errors.isEmpty()) {
+		console.log('error if stmnt')
 		req.flash("error", errors.array()[0].msg)
 		return res.redirect('../edit/'+ id)
 	}	
 	
-	code = body.course_code
-	title = body.course_title
-	description = body.course_desc
-	category = body.course_cat
-	certificate = body.certificate
-	duration = body.course_dur
-	cost = body.course_cost
+	author_edit = body.book_author
+	title_edit = body.book_title
+	desc_edit = body.book_desc
+	genre_edit = body.book_genre
+	edition_edit = body.book_edition
+	count_edit = body.book_count
+	keyword_edit = body.book_keyword
 	 
-	var query = `UPDATE courses SET code = "${code}", title = "${title}", ` +
-						`description = "${description}", category = "${category}", ` +
-						`certificate = "${certificate}", duration = "${duration}", ` +
-						`cost = "${cost}" WHERE code = "${id}"`;
+	var query = `UPDATE book_list SET author = "${author_edit}", title = "${title_edit}", ` +
+						`description = "${desc_edit}", genre = "${genre_edit}", ` +
+						`edition = "${edition_edit}", count = "${count_edit}", ` +
+						`keyword = "${keyword_edit}" WHERE book_id = "${id}"`;
 
 		dbConn.query(query, function(error, data){
 			if(error){
@@ -221,8 +222,7 @@ exports.editRecord = (req, res, next) =>{
 exports.imageUploadPage = (req, res, next) => {
 
 	var code = req.params.id;  //extract course code attached to the URL
-	
-	var query2 = `SELECT * FROM courses WHERE code = "${code}"`;
+	var query2 = `SELECT * FROM book_list WHERE book_id = "${code}"`;
 	dbConn.query(query2, function(error, result){
 		if(error)
 		{
@@ -255,7 +255,7 @@ exports.uploadImage = (req, res, next) => {
 		}		
 
 		//retrive and check if there is image uploaded already
-		var query1 = `SELECT imagePath FROM courses WHERE code = "${code}"`;
+		var query1 = `SELECT imagePath FROM book_list WHERE book_id = "${code}"`;
 		var oldImagePath = "";
 		dbConn.query(query1, function(error, result){
 			if(error){
@@ -267,7 +267,7 @@ exports.uploadImage = (req, res, next) => {
 		var imgsrc = '/images/' + req.file.filename
 		//console.log(imgsrc)
 		
-		var query2 = `UPDATE courses SET imagePath = "${imgsrc}" WHERE code = "${code}"`;
+		var query2 = `UPDATE book_list SET imagePath = "${imgsrc}" WHERE book_id = "${code}"`;
 		dbConn.query(query2, function(error, result){
 			if(error)
 			{

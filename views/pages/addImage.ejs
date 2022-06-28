@@ -7,14 +7,14 @@
         <div class="col-md-7 mx-auto container1">
 			<div class="card text-center">
 				<div class="card-header bg-secondary">
-					<h3>Add/Change Course Image</h3>
+					<h3>Add/Change Book Cover Page</h3>
 				</div>			
 						
 				<div class="card-body">
 					<form action="" method="POST" enctype="multipart/form-data" >
 						<div class="row">
 							<div class="col-12 mb-2 ml-4">		
-								<label for="course_title" class="float-left">Course Title: </label>	
+								<label for="course_title" class="float-left">Book Title: </label>	
 								<label style="padding-left:10px" for="course_code" 
 									class="float-left"><%= data.title %></label>
 							</div>					
@@ -22,9 +22,9 @@
 						
 						<div class="row">
 							<div class="col-12 mb-2 ml-4">		
-								<label for="course_code" class="float-left">Course Code:</label>	
+								<label for="course_code" class="float-left">Author:</label>	
 								<label style="padding-left:10px" for="course_code" 
-										class="float-left"><%= data.code %></label>
+										class="float-left"><%= data.author %></label>
 					
 								<input type="hidden" class="input" name="course_code"
 										id="course_code">
@@ -32,7 +32,7 @@
 						</div>						
 						<div class = "row">						
 							<div class="col-12 mb-2">			
-								<label for="course_img" class="float-left">Course Image/Icon </label>
+								<label for="course_img" class="float-left">Cover Page </label>
 								<input type="file" class="input"  
 										name="course_img" id="course_img">
 							</div>

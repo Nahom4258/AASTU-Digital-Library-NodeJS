@@ -41,7 +41,7 @@ router.get('/logout',
 router.get("/auth/passReset_Request", isNotLoggedin, forgotPassword);
 router.post("/auth/passReset_Request", isNotLoggedin, sendResetPassLink);
 
-router.get("/reset-password", isNotLoggedin, resetPasswordPage);
-router.post("/reset-password", isNotLoggedin, validator.validationRules[3], resetPassword);
+router.get("/auth/reset_password", isNotLoggedin, resetPasswordPage);
+router.post("/auth/reset_password", isNotLoggedin, validator.validationRules[3], resetPassword);
 
 module.exports = router;

@@ -50,7 +50,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: false }));
 
 /* setup port: load default from env variable or set custom */
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 5000);
 
 /*
 * => require local modules: route middleware and controllers
