@@ -19,69 +19,69 @@ exports.recordDisplayPage = (req, res, next) => {
 			query1 = `SELECT * FROM book_list as CO LEFT JOIN users as US ` + 
 						`ON CO.user_id = US.id WHERE US.id = "${req.session.userID}"`;
 	}					
-	// else if (req.method == 'POST')
-	// {
-	// 	const { body } = req;
-	// 	if (typeof body.searchBy === 'undefined')
-	// 	{
-	// 		if(!body.search_Key)
-	// 		{
-	// 			if (req.session.level == 1)
-	// 			{
-	// 				query1 = 'SELECT * FROM `courses`';
-	// 				req.flash ('success', "Please provide a search key!")
-	// 			}
-	// 			else
-	// 			{
-	// 				query1 = `SELECT * FROM courses as CO LEFT JOIN users as US ` + 
-	// 							`ON CO.user_id = US.id WHERE US.id = "${req.session.userID}"`;					
-	// 				req.flash ('success', "Please provide a search key!")
-	// 			}
-	// 		}
-	// 		else{
-	// 			//search multiple columns with "concat & like" operators
-	// 			if (req.session.level == 1)
-	// 			{
-	// 				query1 = `SELECT * FROM courses WHERE `
-	// 							+ `concat (code, title, description, category, certificate)`
-	// 							+ ` like "%${body.search_Key}%"`;
-	// 			}
-	// 			else{
-	// 				query1 = `SELECT * FROM courses as CO LEFT JOIN users as US ON CO.user_id = US.id` + 
-	// 								` WHERE US.id = "${req.session.userID}"` +
-	// 								` AND MATCH (code, title, description)` +
-	// 								` AGAINST ("${body.search_Key}" IN NATURAL LANGUAGE MODE)`;					
-	// 			}
+	else if (req.method == 'POST')
+	{
+		const { body } = req;
+		if (typeof body.searchBy === 'undefined')
+		{
+			if(!body.search_Key)
+			{
+				if (req.session.level == 1)
+				{
+					query1 = 'SELECT * FROM `book_list`';
+					req.flash ('success', "Please provide a search key!")
+				}
+				else
+				{
+					query1 = `SELECT * FROM courses as CO LEFT JOIN users as US ` + 
+								`ON CO.user_id = US.id WHERE US.id = "${req.session.userID}"`;					
+					req.flash ('success', "Please provide a search key!")
+				}
+			}
+			else{
+				//search multiple columns with "concat & like" operators
+				if (req.session.level == 1)
+				{
+					query1 = `SELECT * FROM courses WHERE `
+								+ `concat (code, title, description, category, certificate)`
+								+ ` like "%${body.search_Key}%"`;
+				}
+				else{
+					query1 = `SELECT * FROM courses as CO LEFT JOIN users as US ON CO.user_id = US.id` + 
+									` WHERE US.id = "${req.session.userID}"` +
+									` AND MATCH (code, title, description)` +
+									` AGAINST ("${body.search_Key}" IN NATURAL LANGUAGE MODE)`;					
+				}
 				
-	// 			//fulltext search 
-	// 			/*
-	// 			* `SELECT * FROM courses WHERE MATCH (code, title, description)` +
-	// 			*		` AGAINST ("${body.search_Key}" IN NATURAL LANGUAGE MODE)`;
-	// 			*/
-	// 		}
-	// 	}
-	// 	else if (req.session.level == 1)
-	// 	{
-	// 		if (body.searchBy == "course_code")
-	// 			query1 = `SELECT * FROM courses WHERE code = "${body.search_Key}"`;
-	// 		else if (body.searchBy == "course_title")
-	// 			query1 = `SELECT * FROM courses WHERE title = "${body.search_Key}"`;
-	// 	}
-	// 	else
-	// 	{			
-	// 		if (body.searchBy == "course_code"){
-	// 			query1 = `SELECT * FROM courses as CO LEFT JOIN users as US `
-	// 							+ `ON CO.user_id = US.id WHERE CO.code = "${body.search_Key}"` 
-	// 							+ ` AND US.id = "${req.session.userID}"`;
-	// 		}
+				//fulltext search 
+				/*
+				* `SELECT * FROM courses WHERE MATCH (code, title, description)` +
+				*		` AGAINST ("${body.search_Key}" IN NATURAL LANGUAGE MODE)`;
+				*/
+			}
+		}
+		else if (req.session.level == 1)
+		{
+			if (body.searchBy == "course_code")
+				query1 = `SELECT * FROM courses WHERE code = "${body.search_Key}"`;
+			else if (body.searchBy == "course_title")
+				query1 = `SELECT * FROM courses WHERE title = "${body.search_Key}"`;
+		}
+		else
+		{			
+			if (body.searchBy == "course_code"){
+				query1 = `SELECT * FROM courses as CO LEFT JOIN users as US `
+								+ `ON CO.user_id = US.id WHERE CO.code = "${body.search_Key}"` 
+								+ ` AND US.id = "${req.session.userID}"`;
+			}
 								
-	// 		else if (body.searchBy == "course_title"){		
-	// 			query1 = `SELECT * FROM courses as CO LEFT JOIN users as US `
-	// 							+ `ON CO.user_id = US.id WHERE CO.title = "${body.search_Key}"` 
-	// 							+ ` AND US.id = "${req.session.userID}"`;
-	// 		}			
-	// 	}
-	// }
+			else if (body.searchBy == "course_title"){		
+				query1 = `SELECT * FROM courses as CO LEFT JOIN users as US `
+								+ `ON CO.user_id = US.id WHERE CO.title = "${body.search_Key}"` 
+								+ ` AND US.id = "${req.session.userID}"`;
+			}			
+		}
+	}
 	
 	dbConn.query(query1, (error, result)=>{
 	

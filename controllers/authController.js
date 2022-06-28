@@ -12,25 +12,15 @@ const dbConn = require("../config/db_Connection")
 exports.homePage = (req, res, next) => {
 	var query1;
 	if (req.method == 'GET') {
-		if (req.session.level == 1)
 			query1 = 'SELECT * FROM `book_list`';
-		else
-			query1 = `SELECT * FROM book_list`;
 	}
 
 	else if (req.method == 'POST') {
 		const { body } = req;
+		var searchQ = body.search_Key
 		//fulltext search 
-		if (req.session.level == 1) {
-			query1 = `SELECT * FROM courses WHERE MATCH (code, title, description)` +
-				` AGAINST ("${body.search_Key}" IN NATURAL LANGUAGE MODE)`;
-		}
-		else {
-			query1 = `SELECT * FROM courses as CO LEFT JOIN users as US ON CO.user_id = US.id` +
-				` WHERE US.id = "${req.session.userID}"` +
-				` AND MATCH (code, title, description)` +
-				` AGAINST ("${body.search_Key}" IN NATURAL LANGUAGE MODE)`;
-		}
+			query1 = `SELECT * FROM book_list WHERE title LIKE '%${searchQ}%' OR author LIKE '%${searchQ}%' OR genre LIKE '%${searchQ}%' OR keyword LIKE '%${searchQ}%'`;
+		
 
 		//Alternative: search multiple columns with "concat & like" operators 
 		/*
